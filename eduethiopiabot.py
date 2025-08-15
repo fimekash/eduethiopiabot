@@ -18,11 +18,7 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 # --- QUIZ QUESTIONS ---
 QUIZ_QUESTIONS = [
-    {
-        "question": "🟨 What is the chemical symbol for water?",
-        "options": ["H2O", "O2", "CO2", "NaCl"],
-        "answer": 0
-    },
+
     {
         "question": "🟩 What planet is known as the Red Planet?",
         "options": ["Earth", "Venus", "Mars", "Jupiter"],
@@ -32,7 +28,12 @@ QUIZ_QUESTIONS = [
         "question": "🟥 ስለ ቁጥሮች፣ ተለዋዋጮች፣ ስሌቶችና ዝምድናቸው የሚያጠና የሒሳብ ዘርፍ ምን ይባላል?",
         "options": ["ጂኦሜትሪ", "አልጀብራ", "ካልኩለስ", "ቶፖሎጂ"],
         "answer": 2
-    }
+    },
+        {
+        "question": "🟨 What is the chemical symbol for water?",
+        "options": ["H2O", "O2", "CO2", "NaCl"],
+        "answer": 0
+    },
 ]
 
 # --- START ---
@@ -88,7 +89,7 @@ async def quiz_answer_callback(update: Update, context: ContextTypes.DEFAULT_TYP
     q_index, ans_index = int(q_index), int(ans_index)
     correct = QUIZ_QUESTIONS[q_index]["answer"]
     if ans_index == correct:
-        reply = "🟩 Correct! Great job!"
+        reply = "🟩 Correct! ጀግና!"
     else:
         reply = f"🟥 Wrong. Correct answer: {QUIZ_QUESTIONS[q_index]['options'][correct]}"
     await query.edit_message_text(reply)
@@ -114,9 +115,9 @@ async def support_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (
         "💖 **Support Edupia Teachers** 💖\n\n"
         "If you love our lessons, you can send a bonus:\n"
-        "📱 Telebirr: 0915111564"
-        "🏦 CBE ንግድ ባንክ : 1000204345205"
-        "🏦 BOA አቢሲኒያ : 83725656"
+        "📱 Telebirr: 0915111564",
+        "🏦 CBE ንግድ ባንክ : 1000204345205",
+        "🏦 BOA አቢሲኒያ : 83725656",
         "🌍 PayPal: yourpaypal@example.com"
     )
     await query.edit_message_text(text, parse_mode="Markdown")
