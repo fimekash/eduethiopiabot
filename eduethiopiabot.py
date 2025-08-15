@@ -1,41 +1,38 @@
-import os
-import logging
+    import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, ContextTypes, filters
+from telegram.helpers import escape_markdown
 
 # --- CONFIG ---
 BOT_TOKEN = "8399076842:AAEXifOrHsp_mt3E99khdD_A1EYlDcm9BCY"
 ADMIN_CHAT_ID = 6872304983
 MAIN_CHANNEL = "https://t.me/eduethiopia"
-START_MESSAGE = """
-📚 Grade 9: https://t.me/eduethiopia_Grade9
-📚 Grade 10: https://t.me/eduethiopia_Grade10
-📚 Grade 11: https://t.me/eduethiopia_Grade11
-📚 Grade 12: https://t.me/eduethiopia_Grade12
-🎥 YouTube: https://www.youtube.com/@eduethiopia
-"""
+GRADE_9_LINK = "https://t.me/eduethiopia_Grade9"
+GRADE_10_LINK = "https://t.me/eduethiopia_Grade10"
+GRADE_11_LINK = "https://t.me/eduethiopia_Grade11"
+GRADE_12_LINK = "https://t.me/eduethiopia_Grade12"
+YOUTUBE_CHANNEL = "https://www.youtube.com/@eduethiopia"
 
 # --- LOGGING ---
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 
 # --- QUIZ QUESTIONS ---
 QUIZ_QUESTIONS = [
-
+    {
+        "question": "🟨 What is the chemical symbol for water?",
+        "options": ["H2O", "O2", "CO2", "NaCl"],
+        "answer": 0
+    },
     {
         "question": "🟩 What planet is known as the Red Planet?",
         "options": ["Earth", "Venus", "Mars", "Jupiter"],
         "answer": 2
     },
     {
-        "question": "🟥 ስለ ቁጥሮች፣ ተለዋዋጮች፣ ስሌቶችና ዝምድናቸው የሚያጠና የሒሳብ ዘርፍ ምን ይባላል?",
-        "options": ["ጂኦሜትሪ", "አልጀብራ", "ካልኩለስ", "ቶፖሎጂ"],
+        "question": "🟥 በሂሳብ ውስጥ ፣ ሶስት ማእዘን ያለው አካል ምንድነው?",
+        "options": ["ቀመር", "ማእዘን", "ሶስት ማእዘን", "ኩብ"],
         "answer": 2
-    },
-        {
-        "question": "🟨 What is the chemical symbol for water?",
-        "options": ["H2O", "O2", "CO2", "NaCl"],
-        "answer": 0
-    },
+    }
 ]
 
 # --- START ---
@@ -55,7 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     keyboard = [
         [InlineKeyboardButton("📚 Lessons", callback_data="lessons")],
-        [InlineKeyboardButton("📝 Practice Quiz", callback_data="quiz")],
+        [InlineKeyboardButton("📝 Practice Quiz", callback_data="quiz_start")],
         [InlineKeyboardButton("💬 Ask a Question", callback_data="ask")],
         [InlineKeyboardButton("💖 Support Teacher", callback_data="support")]
     ]
@@ -75,12 +72,23 @@ async def lessons_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text("Choose your grade / ክፍልዎን ይምረጡ:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 # --- QUIZ ---
-async def quiz_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def quiz_start_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    question = QUIZ_QUESTIONS[0]
+    context.user_data["quiz_index"] = 0
+    context.user_data["quiz_score"] = 0
+    await send_quiz_question(query, context)
+
+async def send_quiz_question(query, context):
+    q_index = context.user_data["quiz_index"]
+    if q_index >= len(QUIZ_QUESTIONS):
+        score = context.user_data["quiz_score"]
+        await query.edit_message_text(f"🏆 Quiz completed! Your score: {score}/{len(QUIZ_QUESTIONS)}")
+        return
+
+    question = QUIZ_QUESTIONS[q_index]
     keyboard = [
-        [InlineKeyboardButton(opt, callback_data=f"quiz_answer_0_{i}") for i, opt in enumerate(question["options"])]
+        [InlineKeyboardButton(opt, callback_data=f"quiz_answer_{q_index}_{i}") for i, opt in enumerate(question["options"])]
     ]
     await query.edit_message_text(question["question"], reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -90,11 +98,16 @@ async def quiz_answer_callback(update: Update, context: ContextTypes.DEFAULT_TYP
     _, _, q_index, ans_index = query.data.split("_")
     q_index, ans_index = int(q_index), int(ans_index)
     correct = QUIZ_QUESTIONS[q_index]["answer"]
+
     if ans_index == correct:
-        reply = "🟩 Correct! ጀግና!"
+        reply = "🟩 Correct! Great job!"
+        context.user_data["quiz_score"] += 1
     else:
         reply = f"🟥 Wrong. Correct answer: {QUIZ_QUESTIONS[q_index]['options'][correct]}"
-    await query.edit_message_text(reply)
+
+    await query.message.reply_text(reply)
+    context.user_data["quiz_index"] += 1
+    await send_quiz_question(query, context)
 
 # --- ASK ---
 async def ask_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -106,7 +119,12 @@ async def ask_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.user_data.get("asking"):
         question = update.message.text
-        await context.bot.send_message(ADMIN_CHAT_ID, f"📩 New question from {update.effective_user.first_name}:\n{question}")
+        name = escape_markdown(update.effective_user.first_name, version=2)
+        await context.bot.send_message(
+            ADMIN_CHAT_ID,
+            f"📩 New question from {name}:\n{escape_markdown(question, version=2)}",
+            parse_mode="MarkdownV2"
+        )
         await update.message.reply_text("✅ Your question has been sent to the teacher.")
         context.user_data["asking"] = False
 
@@ -115,23 +133,29 @@ async def support_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     text = (
-        "💖 **Support Edupia Teachers** 💖\n\n"
+        "💖 **Support Eduethiopia Teacher** 💖\n\n"
         "If you love our lessons, you can send a bonus:\n"
-        "📱 Telebirr: 0915111564",
-        "🏦 CBE ንግድ ባንክ : 1000204345205",
-        "🏦 BOA አቢሲኒያ : 83725656",
+        "📱 Telebirr: 0915111564\n"
+        "🏦 BOA አቢሲኒያ: 83725656\n"
+        "🏦 CBE ንግድ ባንክ: 1000204345205\n"
         "🌍 PayPal: yourpaypal@example.com"
     )
     await query.edit_message_text(text, parse_mode="Markdown")
 
 # --- MAIN ---
 app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+# Command
 app.add_handler(CommandHandler("start", start))
+
+# CallbackHandlers
 app.add_handler(CallbackQueryHandler(lessons_callback, pattern="^lessons$"))
-app.add_handler(CallbackQueryHandler(quiz_callback, pattern="^quiz$"))
+app.add_handler(CallbackQueryHandler(quiz_start_callback, pattern="^quiz_start$"))
 app.add_handler(CallbackQueryHandler(quiz_answer_callback, pattern="^quiz_answer_"))
 app.add_handler(CallbackQueryHandler(ask_callback, pattern="^ask$"))
 app.add_handler(CallbackQueryHandler(support_callback, pattern="^support$"))
+
+# Message Handler
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 print("Bot is running...")
