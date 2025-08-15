@@ -125,7 +125,7 @@ async def quiz_answer_callback(update: Update, context: ContextTypes.DEFAULT_TYP
         reply = "🟩 Correct! Great job!"
         context.user_data["quiz_score"] += 1
     else:
-        reply = f"🟥 Wrong. Correct answer: {QUIZ_QUESTIONS[q_index]['options'][correct]}"
+        reply = "🟥 Wrong. Correct answer: {QUIZ_QUESTIONS[q_index]['options'][correct]}"
 
     await query.message.reply_text(reply)
     context.user_data["quiz_index"] += 1
