@@ -3,17 +3,19 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- CONFIG ---
-BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'  # Replace with your BotFather token
+BOT_TOKEN = ' 8399076842:AAEXifOrHsp_mt3E99khdD_A1EYlDcm9BCY' # Replace with your BotFather token
 ADMIN_CHAT_ID = 123456789  # Replace with your Telegram user ID
 GRADE_9_LINK = 't.me/eduethiopia_Grade9'
 GRADE_10_LINK = 't.me/eduethiopia_Grade10'
+GRADE_11_LINK = 't.me/eduethiopia_Grade11'
+GRADE_12_LINK = 't.me/eduethiopia_Grade12'
 MAIN_CHANNEL = 't.me/eduethiopia'
 YOUTUBE_CHANNEL = 'https://www.youtube.com/@eduethiopia'
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = "እንኳን ወደ Edu_pia STEM Bot በደህና መጡ!\\nWelcome to Edu_pia STEM Bot!"
+    text = "እንኳን ወደ Eduethiopia STEM Bot በደህና መጡ!\\nWelcome to Eduethiopia STEM Bot!"
     keyboard = [[InlineKeyboardButton("📚 Lessons / ትምህርቶች", callback_data='lessons')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(text, reply_markup=reply_markup)
@@ -22,8 +24,10 @@ async def lessons_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     keyboard = [
-        [InlineKeyboardButton("Grade 9 / ክፍል 9", callback_data='grade9')],
-        [InlineKeyboardButton("Grade 10 / ክፍል 10", callback_data='grade10')]
+        [InlineKeyboardButton("Grade 9 / 9ኛ ክፍል ", callback_data='grade9')],
+        [InlineKeyboardButton("Grade 10 / 10ኛ ክፍል", callback_data='grade10')],
+      [InlineKeyboardButton("Grade 11 / 11ኛ ክፍል", callback_data='grade11')],
+     [InlineKeyboardButton("Grade 12 / 12ኛ ክፍል", callback_data='grade12')]
     ]
     await query.edit_message_text("Choose your grade / ክፍልዎን ይምረጡ:", reply_markup=InlineKeyboardMarkup(keyboard))
 
