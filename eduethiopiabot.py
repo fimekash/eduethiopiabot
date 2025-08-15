@@ -4,7 +4,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 
 # --- CONFIG ---
 BOT_TOKEN = '8399076842:AAEXifOrHsp_mt3E99khdD_A1EYlDcm9BCY' # Replace with your BotFather token
-ADMIN_CHAT_ID = 123456789  # Replace with your Telegram user ID
+ADMIN_CHAT_ID = '6872304983' # Replace with your Telegram user ID
 GRADE_9_LINK = 't.me/eduethiopia_Grade9'
 GRADE_10_LINK = 't.me/eduethiopia_Grade10'
 GRADE_11_LINK = 't.me/eduethiopia_Grade11'
@@ -15,7 +15,7 @@ YOUTUBE_CHANNEL = 'https://www.youtube.com/@eduethiopia'
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = "እንኳን ወደ Eduethiopia STEM Bot በደህና መጡ!\\nWelcome to Eduethiopia STEM Bot!"
+    text = "እንኳን ወደ Eduethiopia Bot በደህና መጡ!\\n Welcome to Eduethiopia Bot!"
     keyboard = [[InlineKeyboardButton("📚 Lessons / ትምህርቶች", callback_data='lessons')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(text, reply_markup=reply_markup)
