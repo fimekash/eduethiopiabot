@@ -1,4 +1,3 @@
-import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -8,8 +7,8 @@ from telegram.ext import (
 from telegram.helpers import escape_markdown
 
 # --- CONFIG ---
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Set in Render/Heroku environment variables
-ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID", "6872304983"))
+BOT_TOKEN = "8399076842:AAFQ3M5gj4TmD9ZaeyIfqP9lWcxJPYl6fVo"
+ADMIN_CHAT_ID = 6872304983
 
 MAIN_CHANNEL = "https://t.me/eduethiopia"
 GRADE_9_LINK = "https://t.me/eduethiopia_Grade9"
@@ -51,12 +50,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🟩 Grade 9 - 12 STEM Content\n"
         "🟨 Quizzes & Challenges\n"
         "🟥 Ask Questions Directly to Teacher\n\n"
-        f"📢 Main Channel: {MAIN_CHANNEL}\n"
-        f"📚 Grade 9: {GRADE_9_LINK}\n"
-        f"📚 Grade 10: {GRADE_10_LINK}\n"
-        f"📚 Grade 11: {GRADE_11_LINK}\n"
-        f"📚 Grade 12: {GRADE_12_LINK}\n"
-        f"🎥 YouTube: {YOUTUBE_CHANNEL}"
+        f"[📢 Main Channel]({MAIN_CHANNEL})\n"
+        f"[📚 Grade 9]({GRADE_9_LINK})\n"
+        f"[📚 Grade 10]({GRADE_10_LINK})\n"
+        f"[📚 Grade 11]({GRADE_11_LINK})\n"
+        f"[📚 Grade 12]({GRADE_12_LINK})\n"
+        f"[🎥 YouTube]({YOUTUBE_CHANNEL})"
     )
 
     keyboard = [
@@ -81,7 +80,8 @@ async def lessons_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("Grade 10 / 10ኛ ክፍል", url=GRADE_10_LINK)],
         [InlineKeyboardButton("Grade 11 / 11ኛ ክፍል", url=GRADE_11_LINK)],
         [InlineKeyboardButton("Grade 12 / 12ኛ ክፍል", url=GRADE_12_LINK)],
-        [InlineKeyboardButton("📺 YouTube", url=YOUTUBE_CHANNEL)]
+        [InlineKeyboardButton("📺 YouTube", url=YOUTUBE_CHANNEL)],
+        [InlineKeyboardButton("🔙 Back to Menu", callback_data="start_menu")]
     ]
     await query.edit_message_text(
         "Choose your grade / ክፍልዎን ይምረጡ:",
@@ -170,15 +170,21 @@ async def support_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await query.edit_message_text(text, parse_mode="MarkdownV2")
 
+# --- BACK TO MENU ---
+async def start_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    await start(query, context)
+
+# --- ERROR HANDLER ---
+async def error_handler(update, context):
+    logging.error(msg="Exception while handling an update:", exc_info=context.error)
+
 # --- MAIN ---
 def main():
-    if not BOT_TOKEN:
-        print("❌ BOT_TOKEN is missing. Set it in your environment variables.")
-        return
-
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Command
+    # Commands
     app.add_handler(CommandHandler("start", start))
 
     # CallbackHandlers
@@ -187,9 +193,13 @@ def main():
     app.add_handler(CallbackQueryHandler(quiz_answer_callback, pattern="^quiz_answer_"))
     app.add_handler(CallbackQueryHandler(ask_callback, pattern="^ask$"))
     app.add_handler(CallbackQueryHandler(support_callback, pattern="^support$"))
+    app.add_handler(CallbackQueryHandler(start_callback, pattern="^start_menu$"))
 
     # Message Handler
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    # Error handler
+    app.add_error_handler(error_handler)
 
     print("✅ Bot is running...")
     app.run_polling()
