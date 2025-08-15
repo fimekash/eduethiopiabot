@@ -3,7 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- CONFIG ---
-BOT_TOKEN = ' 8399076842:AAEXifOrHsp_mt3E99khdD_A1EYlDcm9BCY' # Replace with your BotFather token
+BOT_TOKEN = '8399076842:AAEXifOrHsp_mt3E99khdD_A1EYlDcm9BCY' # Replace with your BotFather token
 ADMIN_CHAT_ID = 123456789  # Replace with your Telegram user ID
 GRADE_9_LINK = 't.me/eduethiopia_Grade9'
 GRADE_10_LINK = 't.me/eduethiopia_Grade10'
