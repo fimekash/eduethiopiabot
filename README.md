@@ -15,4 +15,4 @@ This is a STEM education bot for Grades 9–12 students in Ethiopia.
 
 ## Requirements
 - Python 3.10+
-- `python-telegram-bot==20.6`
+- `python-telegram-bot==20.7`
