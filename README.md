@@ -1,10 +1,18 @@
-# Edu_pia STEM Bot
+# Eduethiopia Telegram Bot
 
-## Setup Instructions (Phone-friendly)
+This is a STEM education bot for Grades 9–12 students in Ethiopia.
 
-1. Replace '8399076842:AAFQ3M5gj4TmD9ZaeyIfqP9lWcxJPYl6fVo' in `eduethiopiabot.py` with your BotFather token.
-2. Replace '6872304983' with your Telegram user ID.
-3. Upload the files to Render or another Python hosting service.
-4. Set build command: `pip install -r requirements.txt`
-5. Set start command: `python eduethiopiabot.py`
-6. Deploy and start using your Edu_pia STEM Bot!
+## Features
+- Lessons menu linking to Telegram channels & YouTube
+- Practice quizzes with automatic scoring
+- Ask questions to the teacher
+- Support teacher via Telebirr, BOA, CBE, PayPal
+
+## Setup
+1. Set `BOT_TOKEN` and `ADMIN_CHAT_ID` as environment variables.
+2. Run `python eduethiopiabot.py`.
+3. Enjoy your bot!
+
+## Requirements
+- Python 3.10+
+- `python-telegram-bot==20.6`
