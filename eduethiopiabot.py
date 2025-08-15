@@ -7,11 +7,13 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 BOT_TOKEN = "8399076842:AAEXifOrHsp_mt3E99khdD_A1EYlDcm9BCY"
 ADMIN_CHAT_ID = 6872304983
 MAIN_CHANNEL = "https://t.me/eduethiopia"
-GRADE_9_LINK = "https://t.me/eduethiopia_Grade9"
-GRADE_10_LINK = "https://t.me/eduethiopia_Grade10"
-GRADE_11_LINK = "https://t.me/eduethiopia_Grade11"
-GRADE_12_LINK = "https://t.me/eduethiopia_Grade12"
-YOUTUBE_CHANNEL = "https://www.youtube.com/@eduethiopia"
+START_MESSAGE = """
+📚 Grade 9: https://t.me/eduethiopia_Grade9
+📚 Grade 10: https://t.me/eduethiopia_Grade10
+📚 Grade 11: https://t.me/eduethiopia_Grade11
+📚 Grade 12: https://t.me/eduethiopia_Grade12
+🎥 YouTube: https://www.youtube.com/@eduethiopia
+"""
 
 # --- LOGGING ---
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
